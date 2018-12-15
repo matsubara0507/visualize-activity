@@ -63,7 +63,7 @@ mkTitle url =
         file =
             Maybe.withDefault "" (parseFileName url)
     in
-    name ++ " Outputs: " ++ file
+    name ++ " Outputs Chart: " ++ file
 
 
 type Msg
