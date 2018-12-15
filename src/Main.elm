@@ -48,7 +48,7 @@ init _ url _ =
       , width = 900
       , height = 450
       , padding = 30
-      , debug = False
+      , debug = parseDebug url
       }
     , Maybe.unwrap Cmd.none (Cmd.map DataMsg << Data.fetch) (parseDataUrl url)
     )
@@ -177,11 +177,8 @@ column model key outputs =
 
 parseDataUrl : Url -> Maybe String
 parseDataUrl url =
-    let
-        parser =
-            Url.top <?> Query.string "data"
-    in
-    Maybe.join <| Url.parse parser { url | path = "" }
+    Url.parse (Url.top <?> Query.string "data") { url | path = "" }
+        |> Maybe.join
 
 
 parseFileName : Url -> Maybe String
@@ -196,11 +193,15 @@ parseFileName url =
 
 parseName : Url -> Maybe String
 parseName url =
-    let
-        parser =
-            Url.top <?> Query.string "name"
-    in
-    Maybe.join <| Url.parse parser { url | path = "" }
+    Url.parse (Url.top <?> Query.string "name") { url | path = "" }
+        |> Maybe.join
+
+
+parseDebug : Url -> Bool
+parseDebug url =
+    Url.parse (Url.top <?> Query.string "debug") { url | path = "" }
+        |> Maybe.join
+        |> Maybe.unwrap False (always True)
 
 
 toMonth : String -> String
