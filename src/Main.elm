@@ -37,6 +37,7 @@ type alias Model =
     , width : Float
     , height : Float
     , padding : Float
+    , size : Maybe Int
     , debug : Bool
     }
 
@@ -48,6 +49,7 @@ init _ url _ =
       , width = 900
       , height = 450
       , padding = 30
+      , size = parseSize url
       , debug = parseDebug url
       }
     , Maybe.unwrap Cmd.none (Cmd.map DataMsg << Data.fetch) (parseDataUrl url)
@@ -143,7 +145,7 @@ yScale model =
     in
     Scale.linear
         ( model.height - 2 * model.padding, 0 )
-        ( 0, toFloat maxSize )
+        ( 0, toFloat <| Maybe.withDefault maxSize model.size )
 
 
 column : Model -> String -> List Data.Output -> Svg Msg
@@ -194,6 +196,12 @@ parseFileName url =
 parseName : Url -> Maybe String
 parseName url =
     Url.parse (Url.top <?> Query.string "name") { url | path = "" }
+        |> Maybe.join
+
+
+parseSize : Url -> Maybe Int
+parseSize url =
+    Url.parse (Url.top <?> Query.int "size") { url | path = "" }
         |> Maybe.join
 
 
