@@ -1,4 +1,4 @@
-module Data exposing (Data, Msg(..), fetch, update)
+module Data exposing (Data, Msg(..), Output, fetch, update)
 
 import Dict exposing (Dict)
 import Http

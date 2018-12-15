@@ -1,10 +1,19 @@
 module Main exposing (main)
 
+import Array
+import Axis
 import Browser exposing (Document)
 import Data exposing (Data)
 import Debug
+import Dict
 import Html
 import Maybe.Extra as Maybe
+import Scale
+import TypedSvg as Svg
+import TypedSvg.Attributes as SvgAttr
+import TypedSvg.Attributes.InPx as SvgAttrPx
+import TypedSvg.Core as Svg exposing (Svg)
+import TypedSvg.Types as Svg
 import Url exposing (Url)
 import Url.Parser as Url exposing ((<?>))
 import Url.Parser.Query as Query
@@ -23,12 +32,16 @@ main =
 
 type alias Model =
     { data : Maybe Data
+    , width : Float
+    , height : Float
+    , padding : Float
+    , debug : Bool
     }
 
 
 init : () -> Url -> key -> ( Model, Cmd Msg )
 init _ url _ =
-    ( { data = Nothing }
+    ( { data = Nothing, width = 900, height = 450, padding = 30, debug = False }
     , Maybe.unwrap Cmd.none (Cmd.map DataMsg << Data.fetch) (parseDataUrl url)
     )
 
@@ -51,8 +64,85 @@ update msg model =
 view : Model -> Document Msg
 view model =
     { title = "Visualize Activities"
-    , body = [ Html.text (Debug.toString model) ]
+    , body =
+        [ Svg.svg
+            [ SvgAttr.viewBox 0 0 model.width model.height ]
+            [ Svg.style [] [ Svg.text """
+                .column rect { fill: rgba(118, 214, 78, 0.8); }
+                .column text { display: none; }
+                .column:hover rect { fill: rgb(118, 214, 78); }
+                .column:hover text { display: inline; }
+                """ ]
+            , Svg.g
+                [ SvgAttr.transform
+                    [ Svg.Translate (model.padding - 1) (model.height - model.padding) ]
+                ]
+                [ xAxis model ]
+            , Svg.g
+                [ SvgAttr.transform
+                    [ Svg.Translate model.padding model.padding ]
+                , SvgAttr.class [ "series" ]
+                ]
+                (Maybe.unwrap [] (Dict.values << Dict.map (column model)) model.data)
+            ]
+        , if model.debug then
+            Html.text (Debug.toString model)
+
+          else
+            Html.div [] []
+        ]
     }
+
+
+xAxis : Model -> Svg Msg
+xAxis model =
+    Axis.bottom [] <| Scale.toRenderable toMonth (xScale model)
+
+
+xScale : Model -> Scale.BandScale String
+xScale model =
+    let
+        default =
+            Scale.defaultBandConfig
+    in
+    Maybe.unwrap [] Dict.keys model.data
+        |> Scale.band
+            { default | paddingInner = 0.1, paddingOuter = 0.2 }
+            ( 0, model.width - 2 * model.padding )
+
+
+yScale : Model -> Scale.ContinuousScale Float
+yScale model =
+    Scale.linear ( model.height - 2 * model.padding, 0 ) ( 0, 10 )
+
+
+column : Model -> String -> List Data.Output -> Svg Msg
+column model key outputs =
+    let
+        scale =
+            xScale model
+
+        value =
+            toFloat <| List.length outputs
+    in
+    Svg.g [ SvgAttr.class [ "column" ] ]
+        [ Svg.rect
+            [ SvgAttrPx.x <| Scale.convert scale key
+            , SvgAttrPx.y <| Scale.convert (yScale model) value
+            , SvgAttrPx.width <| Scale.bandwidth scale
+            , SvgAttrPx.height <|
+                model.height
+                    - Scale.convert (yScale model) value
+                    - (2 * model.padding)
+            ]
+            []
+        , Svg.text_
+            [ SvgAttrPx.x <| Scale.convert (Scale.toRenderable toMonth scale) key
+            , SvgAttrPx.y <| Scale.convert (yScale model) value - 5
+            , SvgAttr.textAnchor Svg.AnchorMiddle
+            ]
+            [ Svg.text <| String.fromFloat value ]
+        ]
 
 
 parseDataUrl : Url -> Maybe String
@@ -62,3 +152,27 @@ parseDataUrl url =
             Url.top <?> Query.string "data"
     in
     Maybe.join <| Url.parse parser { url | path = "" }
+
+
+toMonth : String -> String
+toMonth str =
+    let
+        month =
+            Array.fromList
+                [ "Jan"
+                , "Feb"
+                , "Mar"
+                , "Apr"
+                , "May"
+                , "Jun"
+                , "Jul"
+                , "Aug"
+                , "Sep"
+                , "Oct"
+                , "Nov"
+                , "Dec"
+                ]
+    in
+    String.toInt str
+        |> Maybe.andThen (\n -> Array.get (n - 1) month)
+        |> Maybe.withDefault "NoN"

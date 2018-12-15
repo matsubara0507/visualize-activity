@@ -2516,6 +2516,43 @@ function _Url_percentDecode(string)
 }
 
 
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
+
+
+
 
 // HELPERS
 
@@ -6205,7 +6242,7 @@ var elm_community$maybe_extra$Maybe$Extra$unwrap = F3(
 var author$project$Main$init = F3(
 	function (_n0, url, _n1) {
 		return _Utils_Tuple2(
-			{data: elm$core$Maybe$Nothing},
+			{data: elm$core$Maybe$Nothing, debug: false, height: 450, padding: 30, width: 900},
 			A3(
 				elm_community$maybe_extra$Maybe$Extra$unwrap,
 				elm$core$Platform$Cmd$none,
@@ -6244,6 +6281,448 @@ var author$project$Main$update = F2(
 			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 		}
 	});
+var elm$core$Array$fromListHelp = F3(
+	function (list, nodeList, nodeListSize) {
+		fromListHelp:
+		while (true) {
+			var _n0 = A2(elm$core$Elm$JsArray$initializeFromList, elm$core$Array$branchFactor, list);
+			var jsArray = _n0.a;
+			var remainingItems = _n0.b;
+			if (_Utils_cmp(
+				elm$core$Elm$JsArray$length(jsArray),
+				elm$core$Array$branchFactor) < 0) {
+				return A2(
+					elm$core$Array$builderToArray,
+					true,
+					{nodeList: nodeList, nodeListSize: nodeListSize, tail: jsArray});
+			} else {
+				var $temp$list = remainingItems,
+					$temp$nodeList = A2(
+					elm$core$List$cons,
+					elm$core$Array$Leaf(jsArray),
+					nodeList),
+					$temp$nodeListSize = nodeListSize + 1;
+				list = $temp$list;
+				nodeList = $temp$nodeList;
+				nodeListSize = $temp$nodeListSize;
+				continue fromListHelp;
+			}
+		}
+	});
+var elm$core$Array$fromList = function (list) {
+	if (!list.b) {
+		return elm$core$Array$empty;
+	} else {
+		return A3(elm$core$Array$fromListHelp, list, _List_Nil, 0);
+	}
+};
+var elm$core$Bitwise$shiftRightZfBy = _Bitwise_shiftRightZfBy;
+var elm$core$Array$bitMask = 4294967295 >>> (32 - elm$core$Array$shiftStep);
+var elm$core$Bitwise$and = _Bitwise_and;
+var elm$core$Elm$JsArray$unsafeGet = _JsArray_unsafeGet;
+var elm$core$Array$getHelp = F3(
+	function (shift, index, tree) {
+		getHelp:
+		while (true) {
+			var pos = elm$core$Array$bitMask & (index >>> shift);
+			var _n0 = A2(elm$core$Elm$JsArray$unsafeGet, pos, tree);
+			if (_n0.$ === 'SubTree') {
+				var subTree = _n0.a;
+				var $temp$shift = shift - elm$core$Array$shiftStep,
+					$temp$index = index,
+					$temp$tree = subTree;
+				shift = $temp$shift;
+				index = $temp$index;
+				tree = $temp$tree;
+				continue getHelp;
+			} else {
+				var values = _n0.a;
+				return A2(elm$core$Elm$JsArray$unsafeGet, elm$core$Array$bitMask & index, values);
+			}
+		}
+	});
+var elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var elm$core$Array$tailIndex = function (len) {
+	return (len >>> 5) << 5;
+};
+var elm$core$Basics$ge = _Utils_ge;
+var elm$core$Array$get = F2(
+	function (index, _n0) {
+		var len = _n0.a;
+		var startShift = _n0.b;
+		var tree = _n0.c;
+		var tail = _n0.d;
+		return ((index < 0) || (_Utils_cmp(index, len) > -1)) ? elm$core$Maybe$Nothing : ((_Utils_cmp(
+			index,
+			elm$core$Array$tailIndex(len)) > -1) ? elm$core$Maybe$Just(
+			A2(elm$core$Elm$JsArray$unsafeGet, elm$core$Array$bitMask & index, tail)) : elm$core$Maybe$Just(
+			A3(elm$core$Array$getHelp, startShift, index, tree)));
+	});
+var elm$core$Maybe$andThen = F2(
+	function (callback, maybeValue) {
+		if (maybeValue.$ === 'Just') {
+			var value = maybeValue.a;
+			return callback(value);
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var elm$core$String$toInt = _String_toInt;
+var author$project$Main$toMonth = function (str) {
+	var month = elm$core$Array$fromList(
+		_List_fromArray(
+			['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']));
+	return A2(
+		elm$core$Maybe$withDefault,
+		'NoN',
+		A2(
+			elm$core$Maybe$andThen,
+			function (n) {
+				return A2(elm$core$Array$get, n - 1, month);
+			},
+			elm$core$String$toInt(str)));
+};
+var gampleman$elm_visualization$Scale$Scale = function (a) {
+	return {$: 'Scale', a: a};
+};
+var elm$core$Basics$clamp = F3(
+	function (low, high, number) {
+		return (_Utils_cmp(number, low) < 0) ? low : ((_Utils_cmp(number, high) > 0) ? high : number);
+	});
+var gampleman$elm_visualization$Scale$Band$normalizeConfig = function (_n0) {
+	var paddingInner = _n0.paddingInner;
+	var paddingOuter = _n0.paddingOuter;
+	var align = _n0.align;
+	return {
+		align: A3(elm$core$Basics$clamp, 0, 1, align),
+		paddingInner: A3(elm$core$Basics$clamp, 0, 1, paddingInner),
+		paddingOuter: A3(elm$core$Basics$clamp, 0, 1, paddingOuter)
+	};
+};
+var gampleman$elm_visualization$Scale$Band$bandwidth = F3(
+	function (cfg, domain, _n0) {
+		var d0 = _n0.a;
+		var d1 = _n0.b;
+		var n = elm$core$List$length(domain);
+		var _n1 = (_Utils_cmp(d0, d1) < 0) ? _Utils_Tuple2(d0, d1) : _Utils_Tuple2(d1, d0);
+		var start = _n1.a;
+		var stop = _n1.b;
+		var _n2 = gampleman$elm_visualization$Scale$Band$normalizeConfig(cfg);
+		var paddingInner = _n2.paddingInner;
+		var paddingOuter = _n2.paddingOuter;
+		var align = _n2.align;
+		var step = (stop - start) / A2(elm$core$Basics$max, 1, (n - paddingInner) + (paddingOuter * 2));
+		return step * (1 - paddingInner);
+	});
+var gampleman$elm_visualization$Scale$Band$computePositions = F4(
+	function (index, cfg, n, _n0) {
+		var start = _n0.a;
+		var stop = _n0.b;
+		var _n1 = gampleman$elm_visualization$Scale$Band$normalizeConfig(cfg);
+		var paddingInner = _n1.paddingInner;
+		var paddingOuter = _n1.paddingOuter;
+		var align = _n1.align;
+		var step = (stop - start) / A2(elm$core$Basics$max, 1, (n - paddingInner) + (paddingOuter * 2));
+		var start2 = start + (((stop - start) - (step * (n - paddingInner))) * align);
+		return _Utils_Tuple2(start2, step);
+	});
+var gampleman$elm_visualization$Scale$Band$indexOfHelp = F3(
+	function (index, value, list) {
+		indexOfHelp:
+		while (true) {
+			if (!list.b) {
+				return elm$core$Maybe$Nothing;
+			} else {
+				var x = list.a;
+				var xs = list.b;
+				if (_Utils_eq(value, x)) {
+					return elm$core$Maybe$Just(index);
+				} else {
+					var $temp$index = index + 1,
+						$temp$value = value,
+						$temp$list = xs;
+					index = $temp$index;
+					value = $temp$value;
+					list = $temp$list;
+					continue indexOfHelp;
+				}
+			}
+		}
+	});
+var gampleman$elm_visualization$Scale$Band$indexOf = gampleman$elm_visualization$Scale$Band$indexOfHelp(0);
+var gampleman$elm_visualization$Scale$Band$convert = F4(
+	function (cfg, domain, _n0, value) {
+		var start = _n0.a;
+		var stop = _n0.b;
+		var _n1 = A2(gampleman$elm_visualization$Scale$Band$indexOf, value, domain);
+		if (_n1.$ === 'Just') {
+			var index = _n1.a;
+			var n = elm$core$List$length(domain);
+			if (_Utils_cmp(start, stop) < 0) {
+				var _n2 = A4(
+					gampleman$elm_visualization$Scale$Band$computePositions,
+					index,
+					cfg,
+					n,
+					_Utils_Tuple2(start, stop));
+				var start2 = _n2.a;
+				var step = _n2.b;
+				return start2 + (step * index);
+			} else {
+				var _n3 = A4(
+					gampleman$elm_visualization$Scale$Band$computePositions,
+					index,
+					cfg,
+					n,
+					_Utils_Tuple2(stop, start));
+				var stop2 = _n3.a;
+				var step = _n3.b;
+				return stop2 + (step * ((n - index) - 1));
+			}
+		} else {
+			return 0 / 0;
+		}
+	});
+var gampleman$elm_visualization$Scale$band = F3(
+	function (config, range_, domain_) {
+		return gampleman$elm_visualization$Scale$Scale(
+			{
+				bandwidth: A3(gampleman$elm_visualization$Scale$Band$bandwidth, config, domain_, range_),
+				convert: gampleman$elm_visualization$Scale$Band$convert(config),
+				domain: domain_,
+				range: range_
+			});
+	});
+var gampleman$elm_visualization$Scale$defaultBandConfig = {align: 0.5, paddingInner: 0.0, paddingOuter: 0.0};
+var author$project$Main$xScale = function (model) {
+	var _default = gampleman$elm_visualization$Scale$defaultBandConfig;
+	return A3(
+		gampleman$elm_visualization$Scale$band,
+		_Utils_update(
+			_default,
+			{paddingInner: 0.1, paddingOuter: 0.2}),
+		_Utils_Tuple2(0, model.width - (2 * model.padding)),
+		A3(elm_community$maybe_extra$Maybe$Extra$unwrap, _List_Nil, elm$core$Dict$keys, model.data));
+};
+var gampleman$elm_visualization$Scale$Internal$bimap = F4(
+	function (_n0, _n1, deinterpolate, reinterpolate) {
+		var d0 = _n0.a;
+		var d1 = _n0.b;
+		var r0 = _n1.a;
+		var r1 = _n1.b;
+		var _n2 = (_Utils_cmp(d1, d0) < 0) ? _Utils_Tuple2(
+			A2(deinterpolate, d1, d0),
+			A2(reinterpolate, r1, r0)) : _Utils_Tuple2(
+			A2(deinterpolate, d0, d1),
+			A2(reinterpolate, r0, r1));
+		var de = _n2.a;
+		var re = _n2.b;
+		return A2(elm$core$Basics$composeL, re, de);
+	});
+var gampleman$elm_visualization$Scale$Internal$interpolateFloat = F3(
+	function (from, to, time) {
+		return from + ((to - from) * time);
+	});
+var gampleman$elm_visualization$Scale$Linear$deinterpolate = F3(
+	function (a, b, x) {
+		var normalizedB = b - a;
+		return (!normalizedB) ? 0 : ((x - a) / normalizedB);
+	});
+var gampleman$elm_visualization$Scale$Linear$convert = F2(
+	function (domain, range) {
+		return A4(gampleman$elm_visualization$Scale$Internal$bimap, domain, range, gampleman$elm_visualization$Scale$Linear$deinterpolate, gampleman$elm_visualization$Scale$Internal$interpolateFloat);
+	});
+var gampleman$elm_visualization$Scale$Linear$interpolate = gampleman$elm_visualization$Scale$Internal$interpolateFloat;
+var gampleman$elm_visualization$Scale$Linear$invert = F2(
+	function (domain, range) {
+		return A4(gampleman$elm_visualization$Scale$Internal$bimap, range, domain, gampleman$elm_visualization$Scale$Linear$deinterpolate, gampleman$elm_visualization$Scale$Linear$interpolate);
+	});
+var elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var elm$core$Basics$abs = function (n) {
+	return (n < 0) ? (-n) : n;
+};
+var elm$core$Basics$e = _Basics_e;
+var elm$core$Basics$pow = _Basics_pow;
+var elm$core$Basics$sqrt = _Basics_sqrt;
+var gampleman$elm_visualization$Statistics$tickStep = F3(
+	function (start, stop, count) {
+		var step0 = elm$core$Basics$abs(stop - start) / A2(elm$core$Basics$max, 0, count);
+		var step1 = A2(
+			elm$core$Basics$pow,
+			10,
+			elm$core$Basics$floor(
+				A2(elm$core$Basics$logBase, elm$core$Basics$e, step0) / A2(elm$core$Basics$logBase, elm$core$Basics$e, 10)));
+		var error = step0 / step1;
+		var step2 = (_Utils_cmp(
+			error,
+			elm$core$Basics$sqrt(50)) > -1) ? (step1 * 10) : ((_Utils_cmp(
+			error,
+			elm$core$Basics$sqrt(10)) > -1) ? (step1 * 5) : ((_Utils_cmp(
+			error,
+			elm$core$Basics$sqrt(2)) > -1) ? (step1 * 2) : step1));
+		return (_Utils_cmp(stop, start) < 0) ? (-step2) : step2;
+	});
+var gampleman$elm_visualization$Scale$Linear$nice = F2(
+	function (_n0, count) {
+		var start = _n0.a;
+		var stop = _n0.b;
+		var step0 = A3(gampleman$elm_visualization$Statistics$tickStep, start, stop, count);
+		var step1 = A3(
+			gampleman$elm_visualization$Statistics$tickStep,
+			elm$core$Basics$floor(start / step0) * step0,
+			elm$core$Basics$ceiling(stop / step0) * step0,
+			count);
+		return _Utils_Tuple2(
+			elm$core$Basics$floor(start / step1) * step1,
+			elm$core$Basics$ceiling(stop / step1) * step1);
+	});
+var gampleman$elm_visualization$Scale$Linear$rangeExtent = F2(
+	function (d, r) {
+		return r;
+	});
+var elm$core$Basics$round = _Basics_round;
+var elm$core$String$fromFloat = _String_fromNumber;
+var elm$core$String$cons = _String_cons;
+var elm$core$String$fromChar = function (_char) {
+	return A2(elm$core$String$cons, _char, '');
+};
+var elm$core$String$length = _String_length;
+var elm$core$Bitwise$shiftRightBy = _Bitwise_shiftRightBy;
+var elm$core$String$repeatHelp = F3(
+	function (n, chunk, result) {
+		return (n <= 0) ? result : A3(
+			elm$core$String$repeatHelp,
+			n >> 1,
+			_Utils_ap(chunk, chunk),
+			(!(n & 1)) ? result : _Utils_ap(result, chunk));
+	});
+var elm$core$String$repeat = F2(
+	function (n, chunk) {
+		return A3(elm$core$String$repeatHelp, n, chunk, '');
+	});
+var elm$core$String$padRight = F3(
+	function (n, _char, string) {
+		return _Utils_ap(
+			string,
+			A2(
+				elm$core$String$repeat,
+				n - elm$core$String$length(string),
+				elm$core$String$fromChar(_char)));
+	});
+var gampleman$elm_visualization$Scale$Internal$toFixed = F2(
+	function (precision, value) {
+		var power = A2(elm$core$Basics$pow, 10, precision);
+		var pad = function (num) {
+			_n0$2:
+			while (true) {
+				if (num.b) {
+					if (num.b.b) {
+						if (!num.b.b.b) {
+							var x = num.a;
+							var _n1 = num.b;
+							var y = _n1.a;
+							return _List_fromArray(
+								[
+									x,
+									A3(
+									elm$core$String$padRight,
+									precision,
+									_Utils_chr('0'),
+									y)
+								]);
+						} else {
+							break _n0$2;
+						}
+					} else {
+						var val = num.a;
+						return (precision > 0) ? _List_fromArray(
+							[
+								val,
+								A3(
+								elm$core$String$padRight,
+								precision,
+								_Utils_chr('0'),
+								'')
+							]) : _List_fromArray(
+							[val]);
+					}
+				} else {
+					break _n0$2;
+				}
+			}
+			var val = num;
+			return val;
+		};
+		return A2(
+			elm$core$String$join,
+			'.',
+			pad(
+				A2(
+					elm$core$String$split,
+					'.',
+					elm$core$String$fromFloat(
+						elm$core$Basics$round(value * power) / power))));
+	});
+var gampleman$elm_visualization$Scale$Linear$exponent = function (x) {
+	return (!x) ? 0 : ((x < 1) ? (1 + gampleman$elm_visualization$Scale$Linear$exponent(x * 10)) : 0);
+};
+var gampleman$elm_visualization$Scale$Linear$precisionFixed = function (step) {
+	return A2(
+		elm$core$Basics$max,
+		0,
+		gampleman$elm_visualization$Scale$Linear$exponent(
+			elm$core$Basics$abs(step)));
+};
+var gampleman$elm_visualization$Scale$Linear$tickFormat = F2(
+	function (_n0, count) {
+		var start = _n0.a;
+		var stop = _n0.b;
+		return gampleman$elm_visualization$Scale$Internal$toFixed(
+			gampleman$elm_visualization$Scale$Linear$precisionFixed(
+				A3(gampleman$elm_visualization$Statistics$tickStep, start, stop, count)));
+	});
+var elm$core$Bitwise$or = _Bitwise_or;
+var gampleman$elm_visualization$Statistics$range = F3(
+	function (start, stop, step) {
+		var n = A2(
+			elm$core$Basics$max,
+			0,
+			0 | elm$core$Basics$ceiling((stop - start) / step));
+		var helper = F2(
+			function (i, list) {
+				return (i >= 0) ? A2(
+					helper,
+					i - 1,
+					A2(elm$core$List$cons, start + (step * i), list)) : list;
+			});
+		return A2(helper, n - 1, _List_Nil);
+	});
+var gampleman$elm_visualization$Statistics$ticks = F3(
+	function (start, stop, count) {
+		var step = A3(gampleman$elm_visualization$Statistics$tickStep, start, stop, count);
+		var end = (elm$core$Basics$floor(stop / step) * step) + (step / 2);
+		var beg = elm$core$Basics$ceiling(start / step) * step;
+		return A3(gampleman$elm_visualization$Statistics$range, beg, end, step);
+	});
+var gampleman$elm_visualization$Scale$Linear$ticks = F2(
+	function (_n0, count) {
+		var start = _n0.a;
+		var end = _n0.b;
+		return A3(gampleman$elm_visualization$Statistics$ticks, start, end, count);
+	});
+var gampleman$elm_visualization$Scale$linear = F2(
+	function (range_, domain_) {
+		return gampleman$elm_visualization$Scale$Scale(
+			{convert: gampleman$elm_visualization$Scale$Linear$convert, domain: domain_, invert: gampleman$elm_visualization$Scale$Linear$invert, nice: gampleman$elm_visualization$Scale$Linear$nice, range: range_, rangeExtent: gampleman$elm_visualization$Scale$Linear$rangeExtent, tickFormat: gampleman$elm_visualization$Scale$Linear$tickFormat, ticks: gampleman$elm_visualization$Scale$Linear$ticks});
+	});
+var author$project$Main$yScale = function (model) {
+	return A2(
+		gampleman$elm_visualization$Scale$linear,
+		_Utils_Tuple2(model.height - (2 * model.padding), 0),
+		_Utils_Tuple2(0, 10));
+};
 var elm$json$Json$Decode$map2 = _Json_map2;
 var elm$json$Json$Decode$succeed = _Json_succeed;
 var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
@@ -6258,14 +6737,626 @@ var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
 			return 3;
 	}
 };
+var elm$virtual_dom$VirtualDom$nodeNS = function (tag) {
+	return _VirtualDom_nodeNS(
+		_VirtualDom_noScript(tag));
+};
+var elm_community$typed_svg$TypedSvg$Core$node = elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
+var elm_community$typed_svg$TypedSvg$g = elm_community$typed_svg$TypedSvg$Core$node('g');
+var elm_community$typed_svg$TypedSvg$rect = elm_community$typed_svg$TypedSvg$Core$node('rect');
+var elm_community$typed_svg$TypedSvg$text_ = elm_community$typed_svg$TypedSvg$Core$node('text');
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm_community$typed_svg$TypedSvg$Core$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'class',
+		A2(elm$core$String$join, ' ', names));
+};
+var elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString = function (anchorAlignment) {
+	switch (anchorAlignment.$) {
+		case 'AnchorInherit':
+			return 'inherit';
+		case 'AnchorStart':
+			return 'start';
+		case 'AnchorMiddle':
+			return 'middle';
+		default:
+			return 'end';
+	}
+};
+var elm_community$typed_svg$TypedSvg$Attributes$textAnchor = function (anchorAlignment) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'text-anchor',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString(anchorAlignment));
+};
+var elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString = function (length) {
+	switch (length.$) {
+		case 'Cm':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'cm';
+		case 'Em':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'em';
+		case 'Ex':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'ex';
+		case 'In':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'in';
+		case 'Mm':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'mm';
+		case 'Num':
+			var x = length.a;
+			return elm$core$String$fromFloat(x);
+		case 'Pc':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'pc';
+		case 'Percent':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + '%';
+		case 'Pt':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'pt';
+		default:
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'px';
+	}
+};
+var elm_community$typed_svg$TypedSvg$Attributes$height = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'height',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Types$Px = function (a) {
+	return {$: 'Px', a: a};
+};
+var elm_community$typed_svg$TypedSvg$Types$px = elm_community$typed_svg$TypedSvg$Types$Px;
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$height = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$height(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$width = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'width',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$width = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$width(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$x = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'x',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$x = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$x(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$y = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'y',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$y = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$y(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
+var elm_community$typed_svg$TypedSvg$Core$text = elm$virtual_dom$VirtualDom$text;
+var elm_community$typed_svg$TypedSvg$Types$AnchorMiddle = {$: 'AnchorMiddle'};
+var gampleman$elm_visualization$Scale$bandwidth = function (_n0) {
+	var scale = _n0.a;
+	return scale.bandwidth;
+};
+var gampleman$elm_visualization$Scale$convert = F2(
+	function (_n0, value) {
+		var scale = _n0.a;
+		return A3(scale.convert, scale.domain, scale.range, value);
+	});
+var gampleman$elm_visualization$Scale$toRenderable = F2(
+	function (toString, _n0) {
+		var scale = _n0.a;
+		return gampleman$elm_visualization$Scale$Scale(
+			{
+				convert: F3(
+					function (dmn, rng, value) {
+						return A3(scale.convert, dmn, rng, value) + (A2(elm$core$Basics$max, scale.bandwidth - 1, 0) / 2);
+					}),
+				domain: scale.domain,
+				range: scale.range,
+				rangeExtent: F2(
+					function (_n1, rng) {
+						return rng;
+					}),
+				tickFormat: F2(
+					function (_n2, _n3) {
+						return toString;
+					}),
+				ticks: F2(
+					function (dmn, _n4) {
+						return dmn;
+					})
+			});
+	});
+var author$project$Main$column = F3(
+	function (model, key, outputs) {
+		var value = elm$core$List$length(outputs);
+		var scale = author$project$Main$xScale(model);
+		return A2(
+			elm_community$typed_svg$TypedSvg$g,
+			_List_fromArray(
+				[
+					elm_community$typed_svg$TypedSvg$Attributes$class(
+					_List_fromArray(
+						['column']))
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm_community$typed_svg$TypedSvg$rect,
+					_List_fromArray(
+						[
+							elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
+							A2(gampleman$elm_visualization$Scale$convert, scale, key)),
+							elm_community$typed_svg$TypedSvg$Attributes$InPx$y(
+							A2(
+								gampleman$elm_visualization$Scale$convert,
+								author$project$Main$yScale(model),
+								value)),
+							elm_community$typed_svg$TypedSvg$Attributes$InPx$width(
+							gampleman$elm_visualization$Scale$bandwidth(scale)),
+							elm_community$typed_svg$TypedSvg$Attributes$InPx$height(
+							(model.height - A2(
+								gampleman$elm_visualization$Scale$convert,
+								author$project$Main$yScale(model),
+								value)) - (2 * model.padding))
+						]),
+					_List_Nil),
+					A2(
+					elm_community$typed_svg$TypedSvg$text_,
+					_List_fromArray(
+						[
+							elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
+							A2(
+								gampleman$elm_visualization$Scale$convert,
+								A2(gampleman$elm_visualization$Scale$toRenderable, author$project$Main$toMonth, scale),
+								key)),
+							elm_community$typed_svg$TypedSvg$Attributes$InPx$y(
+							A2(
+								gampleman$elm_visualization$Scale$convert,
+								author$project$Main$yScale(model),
+								value) - 5),
+							elm_community$typed_svg$TypedSvg$Attributes$textAnchor(elm_community$typed_svg$TypedSvg$Types$AnchorMiddle)
+						]),
+					_List_fromArray(
+						[
+							elm_community$typed_svg$TypedSvg$Core$text(
+							elm$core$String$fromFloat(value))
+						]))
+				]));
+	});
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
+var elm$svg$Svg$line = elm$svg$Svg$trustedNode('line');
+var elm$svg$Svg$path = elm$svg$Svg$trustedNode('path');
+var elm$svg$Svg$text = elm$virtual_dom$VirtualDom$text;
+var elm$svg$Svg$text_ = elm$svg$Svg$trustedNode('text');
+var elm$svg$Svg$Attributes$class = _VirtualDom_attribute('class');
+var elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var elm$svg$Svg$Attributes$dy = _VirtualDom_attribute('dy');
+var elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var elm$svg$Svg$Attributes$fontFamily = _VirtualDom_attribute('font-family');
+var elm$svg$Svg$Attributes$fontSize = _VirtualDom_attribute('font-size');
+var elm$svg$Svg$Attributes$stroke = _VirtualDom_attribute('stroke');
+var elm$svg$Svg$Attributes$textAnchor = _VirtualDom_attribute('text-anchor');
+var elm$svg$Svg$Attributes$transform = _VirtualDom_attribute('transform');
+var gampleman$elm_visualization$Scale$tickFormat = function (_n0) {
+	var opts = _n0.a;
+	return opts.tickFormat(opts.domain);
+};
+var gampleman$elm_visualization$Scale$ticks = F2(
+	function (_n0, count) {
+		var scale = _n0.a;
+		return A2(scale.ticks, scale.domain, count);
+	});
+var gampleman$elm_visualization$Axis$computeOptions = F2(
+	function (attrs, scale) {
+		var _n0 = A3(
+			elm$core$List$foldl,
+			F2(
+				function (attr, _n1) {
+					var babyOpts = _n1.a;
+					var post = _n1.b;
+					switch (attr.$) {
+						case 'TickCount':
+							var val = attr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									babyOpts,
+									{tickCount: val}),
+								post);
+						case 'TickSizeInner':
+							var val = attr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									babyOpts,
+									{tickSizeInner: val}),
+								post);
+						case 'TickSizeOuter':
+							var val = attr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									babyOpts,
+									{tickSizeOuter: val}),
+								post);
+						case 'TickPadding':
+							var val = attr.a;
+							return _Utils_Tuple2(
+								_Utils_update(
+									babyOpts,
+									{tickPadding: val}),
+								post);
+						default:
+							return _Utils_Tuple2(
+								babyOpts,
+								A2(elm$core$List$cons, attr, post));
+					}
+				}),
+			_Utils_Tuple2(
+				{tickCount: 10, tickPadding: 3, tickSizeInner: 6, tickSizeOuter: 6},
+				_List_Nil),
+			attrs);
+		var opts = _n0.a;
+		var postList = _n0.b;
+		return A3(
+			elm$core$List$foldl,
+			F2(
+				function (attr, options) {
+					switch (attr.$) {
+						case 'Ticks':
+							var val = attr.a;
+							return _Utils_update(
+								options,
+								{ticks: val});
+						case 'TickFormat':
+							var val = attr.a;
+							return _Utils_update(
+								options,
+								{tickFormat: val});
+						default:
+							return options;
+					}
+				}),
+			{
+				tickCount: opts.tickCount,
+				tickFormat: A2(gampleman$elm_visualization$Scale$tickFormat, scale, opts.tickCount),
+				tickPadding: opts.tickPadding,
+				tickSizeInner: opts.tickSizeInner,
+				tickSizeOuter: opts.tickSizeOuter,
+				ticks: A2(gampleman$elm_visualization$Scale$ticks, scale, opts.tickCount)
+			},
+			postList);
+	});
+var gampleman$elm_visualization$Scale$rangeExtent = function (_n0) {
+	var options = _n0.a;
+	return A2(options.rangeExtent, options.domain, options.range);
+};
+var gampleman$elm_visualization$Axis$element = F4(
+	function (_n0, k, displacement, textAnchorPosition) {
+		var x = _n0.x;
+		var y = _n0.y;
+		var x1 = _n0.x1;
+		var x2 = _n0.x2;
+		var y1 = _n0.y1;
+		var y2 = _n0.y2;
+		var translate = _n0.translate;
+		var horizontal = _n0.horizontal;
+		return F2(
+			function (attrs, scale) {
+				var rangeExtent = gampleman$elm_visualization$Scale$rangeExtent(scale);
+				var range1 = rangeExtent.b + 0.5;
+				var range0 = rangeExtent.a + 0.5;
+				var position = gampleman$elm_visualization$Scale$convert(scale);
+				var opts = A2(gampleman$elm_visualization$Axis$computeOptions, attrs, scale);
+				var spacing = A2(elm$core$Basics$max, opts.tickSizeInner, 0) + opts.tickPadding;
+				var drawTick = function (tick) {
+					return A2(
+						elm$svg$Svg$g,
+						_List_fromArray(
+							[
+								elm$svg$Svg$Attributes$class('tick'),
+								elm$svg$Svg$Attributes$transform(
+								translate(
+									position(tick)))
+							]),
+						_List_fromArray(
+							[
+								A2(
+								elm$svg$Svg$line,
+								_List_fromArray(
+									[
+										elm$svg$Svg$Attributes$stroke('#000'),
+										x2(k * opts.tickSizeInner),
+										y1(0.5),
+										y2(0.5)
+									]),
+								_List_Nil),
+								A2(
+								elm$svg$Svg$text_,
+								_List_fromArray(
+									[
+										elm$svg$Svg$Attributes$fill('#000'),
+										x(k * spacing),
+										y(0.5),
+										elm$svg$Svg$Attributes$dy(displacement)
+									]),
+								_List_fromArray(
+									[
+										elm$svg$Svg$text(
+										opts.tickFormat(tick))
+									]))
+							]));
+				};
+				var domainLine = horizontal ? ('M' + (elm$core$String$fromFloat(k * opts.tickSizeOuter) + (',' + (elm$core$String$fromFloat(range0) + ('H0.5V' + (elm$core$String$fromFloat(range1) + ('H' + elm$core$String$fromFloat(k * opts.tickSizeOuter)))))))) : ('M' + (elm$core$String$fromFloat(range0) + (',' + (elm$core$String$fromFloat(k * opts.tickSizeOuter) + ('V0.5H' + (elm$core$String$fromFloat(range1) + ('V' + elm$core$String$fromFloat(k * opts.tickSizeOuter))))))));
+				return A2(
+					elm$svg$Svg$g,
+					_List_fromArray(
+						[
+							elm$svg$Svg$Attributes$fill('none'),
+							elm$svg$Svg$Attributes$fontSize('10'),
+							elm$svg$Svg$Attributes$fontFamily('sans-serif'),
+							elm$svg$Svg$Attributes$textAnchor(textAnchorPosition)
+						]),
+					A2(
+						elm$core$List$cons,
+						A2(
+							elm$svg$Svg$path,
+							_List_fromArray(
+								[
+									elm$svg$Svg$Attributes$class('domain'),
+									elm$svg$Svg$Attributes$stroke('#000'),
+									elm$svg$Svg$Attributes$d(domainLine)
+								]),
+							_List_Nil),
+						A2(elm$core$List$map, drawTick, opts.ticks)));
+			});
+	});
+var elm$svg$Svg$Attributes$x = _VirtualDom_attribute('x');
+var elm$svg$Svg$Attributes$x1 = _VirtualDom_attribute('x1');
+var elm$svg$Svg$Attributes$x2 = _VirtualDom_attribute('x2');
+var elm$svg$Svg$Attributes$y = _VirtualDom_attribute('y');
+var elm$svg$Svg$Attributes$y1 = _VirtualDom_attribute('y1');
+var elm$svg$Svg$Attributes$y2 = _VirtualDom_attribute('y2');
+var gampleman$elm_visualization$Axis$verticalAttrs = {
+	horizontal: false,
+	translate: function (x) {
+		return 'translate(' + (elm$core$String$fromFloat(x) + ', 0)');
+	},
+	x: A2(elm$core$Basics$composeL, elm$svg$Svg$Attributes$y, elm$core$String$fromFloat),
+	x1: A2(elm$core$Basics$composeL, elm$svg$Svg$Attributes$y1, elm$core$String$fromFloat),
+	x2: A2(elm$core$Basics$composeL, elm$svg$Svg$Attributes$y2, elm$core$String$fromFloat),
+	y: A2(elm$core$Basics$composeL, elm$svg$Svg$Attributes$x, elm$core$String$fromFloat),
+	y1: A2(elm$core$Basics$composeL, elm$svg$Svg$Attributes$x1, elm$core$String$fromFloat),
+	y2: A2(elm$core$Basics$composeL, elm$svg$Svg$Attributes$x2, elm$core$String$fromFloat)
+};
+var gampleman$elm_visualization$Axis$bottom = A4(gampleman$elm_visualization$Axis$element, gampleman$elm_visualization$Axis$verticalAttrs, 1, '0.71em', 'middle');
+var author$project$Main$xAxis = function (model) {
+	return A2(
+		gampleman$elm_visualization$Axis$bottom,
+		_List_Nil,
+		A2(
+			gampleman$elm_visualization$Scale$toRenderable,
+			author$project$Main$toMonth,
+			author$project$Main$xScale(model)));
+};
+var elm$core$Dict$map = F2(
+	function (func, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			return A5(
+				elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				A2(func, key, value),
+				A2(elm$core$Dict$map, func, left),
+				A2(elm$core$Dict$map, func, right));
+		}
+	});
+var elm$core$Dict$values = function (dict) {
+	return A3(
+		elm$core$Dict$foldr,
+		F3(
+			function (key, value, valueList) {
+				return A2(elm$core$List$cons, value, valueList);
+			}),
+		_List_Nil,
+		dict);
+};
+var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm_community$typed_svg$TypedSvg$style = elm_community$typed_svg$TypedSvg$Core$node('style');
+var elm_community$typed_svg$TypedSvg$svg = elm_community$typed_svg$TypedSvg$Core$node('svg');
+var elm$core$String$concat = function (strings) {
+	return A2(elm$core$String$join, '', strings);
+};
+var elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString = function (xform) {
+	var tr = F2(
+		function (name, args) {
+			return elm$core$String$concat(
+				_List_fromArray(
+					[
+						name,
+						'(',
+						A2(
+						elm$core$String$join,
+						' ',
+						A2(elm$core$List$map, elm$core$String$fromFloat, args)),
+						')'
+					]));
+		});
+	switch (xform.$) {
+		case 'Matrix':
+			var a = xform.a;
+			var b = xform.b;
+			var c = xform.c;
+			var d = xform.d;
+			var e = xform.e;
+			var f = xform.f;
+			return A2(
+				tr,
+				'matrix',
+				_List_fromArray(
+					[a, b, c, d, e, f]));
+		case 'Rotate':
+			var a = xform.a;
+			var x = xform.b;
+			var y = xform.c;
+			return A2(
+				tr,
+				'rotate',
+				_List_fromArray(
+					[a, x, y]));
+		case 'Scale':
+			var x = xform.a;
+			var y = xform.b;
+			return A2(
+				tr,
+				'scale',
+				_List_fromArray(
+					[x, y]));
+		case 'SkewX':
+			var x = xform.a;
+			return A2(
+				tr,
+				'skewX',
+				_List_fromArray(
+					[x]));
+		case 'SkewY':
+			var y = xform.a;
+			return A2(
+				tr,
+				'skewY',
+				_List_fromArray(
+					[y]));
+		default:
+			var x = xform.a;
+			var y = xform.b;
+			return A2(
+				tr,
+				'translate',
+				_List_fromArray(
+					[x, y]));
+	}
+};
+var elm_community$typed_svg$TypedSvg$Attributes$transform = function (transforms) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'transform',
+		A2(
+			elm$core$String$join,
+			' ',
+			A2(elm$core$List$map, elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString, transforms)));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$viewBox = F4(
+	function (minX, minY, vWidth, vHeight) {
+		return A2(
+			elm_community$typed_svg$TypedSvg$Core$attribute,
+			'viewBox',
+			A2(
+				elm$core$String$join,
+				' ',
+				A2(
+					elm$core$List$map,
+					elm$core$String$fromFloat,
+					_List_fromArray(
+						[minX, minY, vWidth, vHeight]))));
+	});
+var elm_community$typed_svg$TypedSvg$Types$Translate = F2(
+	function (a, b) {
+		return {$: 'Translate', a: a, b: b};
+	});
 var author$project$Main$view = function (model) {
 	return {
 		body: _List_fromArray(
 			[
-				elm$html$Html$text(
-				elm$core$Debug$toString(model))
+				A2(
+				elm_community$typed_svg$TypedSvg$svg,
+				_List_fromArray(
+					[
+						A4(elm_community$typed_svg$TypedSvg$Attributes$viewBox, 0, 0, model.width, model.height)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm_community$typed_svg$TypedSvg$style,
+						_List_Nil,
+						_List_fromArray(
+							[
+								elm_community$typed_svg$TypedSvg$Core$text('\n                .column rect { fill: rgba(118, 214, 78, 0.8); }\n                .column text { display: none; }\n                .column:hover rect { fill: rgb(118, 214, 78); }\n                .column:hover text { display: inline; }\n                ')
+							])),
+						A2(
+						elm_community$typed_svg$TypedSvg$g,
+						_List_fromArray(
+							[
+								elm_community$typed_svg$TypedSvg$Attributes$transform(
+								_List_fromArray(
+									[
+										A2(elm_community$typed_svg$TypedSvg$Types$Translate, model.padding - 1, model.height - model.padding)
+									]))
+							]),
+						_List_fromArray(
+							[
+								author$project$Main$xAxis(model)
+							])),
+						A2(
+						elm_community$typed_svg$TypedSvg$g,
+						_List_fromArray(
+							[
+								elm_community$typed_svg$TypedSvg$Attributes$transform(
+								_List_fromArray(
+									[
+										A2(elm_community$typed_svg$TypedSvg$Types$Translate, model.padding, model.padding)
+									])),
+								elm_community$typed_svg$TypedSvg$Attributes$class(
+								_List_fromArray(
+									['series']))
+							]),
+						A3(
+							elm_community$maybe_extra$Maybe$Extra$unwrap,
+							_List_Nil,
+							A2(
+								elm$core$Basics$composeL,
+								elm$core$Dict$values,
+								elm$core$Dict$map(
+									author$project$Main$column(model))),
+							model.data))
+					])),
+				model.debug ? elm$html$Html$text(
+				elm$core$Debug$toString(model)) : A2(elm$html$Html$div, _List_Nil, _List_Nil)
 			]),
 		title: 'Visualize Activities'
 	};
@@ -6342,7 +7433,6 @@ var elm$core$Task$perform = F2(
 			elm$core$Task$Perform(
 				A2(elm$core$Task$map, toMessage, task)));
 	});
-var elm$core$String$length = _String_length;
 var elm$core$String$slice = _String_slice;
 var elm$core$String$dropLeft = F2(
 	function (n, string) {
@@ -6364,7 +7454,6 @@ var elm$core$String$left = F2(
 		return (n < 1) ? '' : A3(elm$core$String$slice, 0, n, string);
 	});
 var elm$core$String$contains = _String_contains;
-var elm$core$String$toInt = _String_toInt;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
 		return {fragment: fragment, host: host, path: path, port_: port_, protocol: protocol, query: query};
