@@ -7,6 +7,7 @@ import Data exposing (Data)
 import Debug
 import Dict
 import Html
+import Html.Attributes as Html
 import Maybe.Extra as Maybe
 import Scale
 import TypedSvg as Svg
@@ -32,6 +33,7 @@ main =
 
 type alias Model =
     { data : Maybe Data
+    , title : String
     , width : Float
     , height : Float
     , padding : Float
@@ -41,9 +43,27 @@ type alias Model =
 
 init : () -> Url -> key -> ( Model, Cmd Msg )
 init _ url _ =
-    ( { data = Nothing, width = 900, height = 450, padding = 30, debug = False }
+    ( { data = Nothing
+      , title = mkTitle url
+      , width = 900
+      , height = 450
+      , padding = 30
+      , debug = False
+      }
     , Maybe.unwrap Cmd.none (Cmd.map DataMsg << Data.fetch) (parseDataUrl url)
     )
+
+
+mkTitle : Url -> String
+mkTitle url =
+    let
+        name =
+            Maybe.unwrap "Your" (\s -> s ++ "'s") (parseName url)
+
+        file =
+            Maybe.withDefault "" (parseFileName url)
+    in
+    name ++ " Outputs: " ++ file
 
 
 type Msg
@@ -63,9 +83,10 @@ update msg model =
 
 view : Model -> Document Msg
 view model =
-    { title = "Visualize Activities"
+    { title = model.title
     , body =
-        [ Svg.svg
+        [ Html.h2 [ Html.style "text-align" "center" ] [ Html.text model.title ]
+        , Svg.svg
             [ SvgAttr.viewBox 0 0 model.width model.height ]
             [ Svg.style [] [ Svg.text """
                 .column rect { fill: rgba(118, 214, 78, 0.8); }
@@ -113,7 +134,16 @@ xScale model =
 
 yScale : Model -> Scale.ContinuousScale Float
 yScale model =
-    Scale.linear ( model.height - 2 * model.padding, 0 ) ( 0, 10 )
+    let
+        maxSize =
+            Maybe.unwrap [] Dict.values model.data
+                |> List.map List.length
+                |> List.maximum
+                |> Maybe.withDefault 5
+    in
+    Scale.linear
+        ( model.height - 2 * model.padding, 0 )
+        ( 0, toFloat maxSize )
 
 
 column : Model -> String -> List Data.Output -> Svg Msg
@@ -150,6 +180,25 @@ parseDataUrl url =
     let
         parser =
             Url.top <?> Query.string "data"
+    in
+    Maybe.join <| Url.parse parser { url | path = "" }
+
+
+parseFileName : Url -> Maybe String
+parseFileName url =
+    parseDataUrl url
+        |> Maybe.andThen Url.fromString
+        |> Maybe.map (String.split "/" << .path)
+        |> Maybe.andThen (List.head << List.reverse)
+        |> Maybe.map (String.split ".")
+        |> Maybe.andThen List.head
+
+
+parseName : Url -> Maybe String
+parseName url =
+    let
+        parser =
+            Url.top <?> Query.string "name"
     in
     Maybe.join <| Url.parse parser { url | path = "" }
 
