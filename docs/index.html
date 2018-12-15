@@ -2516,43 +2516,6 @@ function _Url_percentDecode(string)
 }
 
 
-var _Bitwise_and = F2(function(a, b)
-{
-	return a & b;
-});
-
-var _Bitwise_or = F2(function(a, b)
-{
-	return a | b;
-});
-
-var _Bitwise_xor = F2(function(a, b)
-{
-	return a ^ b;
-});
-
-function _Bitwise_complement(a)
-{
-	return ~a;
-};
-
-var _Bitwise_shiftLeftBy = F2(function(offset, a)
-{
-	return a << offset;
-});
-
-var _Bitwise_shiftRightBy = F2(function(offset, a)
-{
-	return a >> offset;
-});
-
-var _Bitwise_shiftRightZfBy = F2(function(offset, a)
-{
-	return a >>> offset;
-});
-
-
-
 
 // HELPERS
 
@@ -4108,6 +4071,43 @@ function _VirtualDom_dekey(keyedNode)
 		b: keyedNode.b
 	};
 }
+
+
+
+var _Bitwise_and = F2(function(a, b)
+{
+	return a & b;
+});
+
+var _Bitwise_or = F2(function(a, b)
+{
+	return a | b;
+});
+
+var _Bitwise_xor = F2(function(a, b)
+{
+	return a ^ b;
+});
+
+function _Bitwise_complement(a)
+{
+	return ~a;
+};
+
+var _Bitwise_shiftLeftBy = F2(function(offset, a)
+{
+	return a << offset;
+});
+
+var _Bitwise_shiftRightBy = F2(function(offset, a)
+{
+	return a >> offset;
+});
+
+var _Bitwise_shiftRightZfBy = F2(function(offset, a)
+{
+	return a >>> offset;
+});
 
 
 
@@ -6539,6 +6539,333 @@ var author$project$Main$update = F2(
 			return _Utils_Tuple2(model, elm$core$Platform$Cmd$none);
 		}
 	});
+var elm$core$Dict$values = function (dict) {
+	return A3(
+		elm$core$Dict$foldr,
+		F3(
+			function (key, value, valueList) {
+				return A2(elm$core$List$cons, value, valueList);
+			}),
+		_List_Nil,
+		dict);
+};
+var elm$core$Set$Set_elm_builtin = function (a) {
+	return {$: 'Set_elm_builtin', a: a};
+};
+var elm$core$Set$empty = elm$core$Set$Set_elm_builtin(elm$core$Dict$empty);
+var elm$core$Set$insert = F2(
+	function (key, _n0) {
+		var dict = _n0.a;
+		return elm$core$Set$Set_elm_builtin(
+			A3(elm$core$Dict$insert, key, _Utils_Tuple0, dict));
+	});
+var elm$core$Dict$member = F2(
+	function (key, dict) {
+		var _n0 = A2(elm$core$Dict$get, key, dict);
+		if (_n0.$ === 'Just') {
+			return true;
+		} else {
+			return false;
+		}
+	});
+var elm$core$Set$member = F2(
+	function (key, _n0) {
+		var dict = _n0.a;
+		return A2(elm$core$Dict$member, key, dict);
+	});
+var elm_community$list_extra$List$Extra$uniqueHelp = F4(
+	function (f, existing, remaining, accumulator) {
+		uniqueHelp:
+		while (true) {
+			if (!remaining.b) {
+				return elm$core$List$reverse(accumulator);
+			} else {
+				var first = remaining.a;
+				var rest = remaining.b;
+				var computedFirst = f(first);
+				if (A2(elm$core$Set$member, computedFirst, existing)) {
+					var $temp$f = f,
+						$temp$existing = existing,
+						$temp$remaining = rest,
+						$temp$accumulator = accumulator;
+					f = $temp$f;
+					existing = $temp$existing;
+					remaining = $temp$remaining;
+					accumulator = $temp$accumulator;
+					continue uniqueHelp;
+				} else {
+					var $temp$f = f,
+						$temp$existing = A2(elm$core$Set$insert, computedFirst, existing),
+						$temp$remaining = rest,
+						$temp$accumulator = A2(elm$core$List$cons, first, accumulator);
+					f = $temp$f;
+					existing = $temp$existing;
+					remaining = $temp$remaining;
+					accumulator = $temp$accumulator;
+					continue uniqueHelp;
+				}
+			}
+		}
+	});
+var elm_community$list_extra$List$Extra$unique = function (list) {
+	return A4(elm_community$list_extra$List$Extra$uniqueHelp, elm$core$Basics$identity, elm$core$Set$empty, list, _List_Nil);
+};
+var author$project$Data$categories = function (data) {
+	return elm_community$list_extra$List$Extra$unique(
+		A2(
+			elm$core$List$map,
+			function ($) {
+				return $.media;
+			},
+			elm$core$List$concat(
+				elm$core$Dict$values(data))));
+};
+var elm$core$Tuple$pair = F2(
+	function (a, b) {
+		return _Utils_Tuple2(a, b);
+	});
+var elm_community$list_extra$List$Extra$zip = elm$core$List$map2(elm$core$Tuple$pair);
+var avh4$elm_color$Color$RgbaSpace = F4(
+	function (a, b, c, d) {
+		return {$: 'RgbaSpace', a: a, b: b, c: c, d: d};
+	});
+var avh4$elm_color$Color$scaleFrom255 = function (c) {
+	return c / 255;
+};
+var avh4$elm_color$Color$rgb255 = F3(
+	function (r, g, b) {
+		return A4(
+			avh4$elm_color$Color$RgbaSpace,
+			avh4$elm_color$Color$scaleFrom255(r),
+			avh4$elm_color$Color$scaleFrom255(g),
+			avh4$elm_color$Color$scaleFrom255(b),
+			1.0);
+	});
+var gampleman$elm_visualization$Scale$Color$category10 = _List_fromArray(
+	[
+		A3(avh4$elm_color$Color$rgb255, 31, 119, 180),
+		A3(avh4$elm_color$Color$rgb255, 255, 127, 14),
+		A3(avh4$elm_color$Color$rgb255, 44, 160, 44),
+		A3(avh4$elm_color$Color$rgb255, 214, 39, 40),
+		A3(avh4$elm_color$Color$rgb255, 148, 103, 189),
+		A3(avh4$elm_color$Color$rgb255, 140, 86, 75),
+		A3(avh4$elm_color$Color$rgb255, 227, 119, 194),
+		A3(avh4$elm_color$Color$rgb255, 127, 127, 127),
+		A3(avh4$elm_color$Color$rgb255, 188, 189, 34),
+		A3(avh4$elm_color$Color$rgb255, 23, 190, 207)
+	]);
+var author$project$Main$colors = function (data) {
+	return elm$core$Dict$fromList(
+		A2(
+			elm_community$list_extra$List$Extra$zip,
+			author$project$Data$categories(data),
+			gampleman$elm_visualization$Scale$Color$category10));
+};
+var elm$json$Json$Encode$string = _Json_wrap;
+var elm$json$Json$Decode$map2 = _Json_map2;
+var elm$json$Json$Decode$succeed = _Json_succeed;
+var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
+	switch (handler.$) {
+		case 'Normal':
+			return 0;
+		case 'MayStopPropagation':
+			return 1;
+		case 'MayPreventDefault':
+			return 2;
+		default:
+			return 3;
+	}
+};
+var elm$html$Html$Attributes$stringProperty = F2(
+	function (key, string) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			elm$json$Json$Encode$string(string));
+	});
+var elm$html$Html$Attributes$id = elm$html$Html$Attributes$stringProperty('id');
+var elm$virtual_dom$VirtualDom$nodeNS = function (tag) {
+	return _VirtualDom_nodeNS(
+		_VirtualDom_noScript(tag));
+};
+var elm_community$typed_svg$TypedSvg$Core$node = elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
+var elm_community$typed_svg$TypedSvg$rect = elm_community$typed_svg$TypedSvg$Core$node('rect');
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm_community$typed_svg$TypedSvg$Core$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$core$Basics$round = _Basics_round;
+var elm$core$String$concat = function (strings) {
+	return A2(elm$core$String$join, '', strings);
+};
+var elm$core$String$fromFloat = _String_fromNumber;
+var avh4$elm_color$Color$toCssString = function (_n0) {
+	var r = _n0.a;
+	var g = _n0.b;
+	var b = _n0.c;
+	var a = _n0.d;
+	var roundTo = function (x) {
+		return elm$core$Basics$round(x * 1000) / 1000;
+	};
+	var pct = function (x) {
+		return elm$core$Basics$round(x * 10000) / 100;
+	};
+	return elm$core$String$concat(
+		_List_fromArray(
+			[
+				'rgba(',
+				elm$core$String$fromFloat(
+				pct(r)),
+				'%,',
+				elm$core$String$fromFloat(
+				pct(g)),
+				'%,',
+				elm$core$String$fromFloat(
+				pct(b)),
+				'%,',
+				elm$core$String$fromFloat(
+				roundTo(a)),
+				')'
+			]));
+};
+var elm_community$typed_svg$TypedSvg$TypesToStrings$fillToString = function (fill) {
+	if (fill.$ === 'Fill') {
+		var color = fill.a;
+		return avh4$elm_color$Color$toCssString(color);
+	} else {
+		return 'none';
+	}
+};
+var elm_community$typed_svg$TypedSvg$Attributes$fill = A2(
+	elm$core$Basics$composeL,
+	elm_community$typed_svg$TypedSvg$Core$attribute('fill'),
+	elm_community$typed_svg$TypedSvg$TypesToStrings$fillToString);
+var elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString = function (length) {
+	switch (length.$) {
+		case 'Cm':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'cm';
+		case 'Em':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'em';
+		case 'Ex':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'ex';
+		case 'In':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'in';
+		case 'Mm':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'mm';
+		case 'Num':
+			var x = length.a;
+			return elm$core$String$fromFloat(x);
+		case 'Pc':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'pc';
+		case 'Percent':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + '%';
+		case 'Pt':
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'pt';
+		default:
+			var x = length.a;
+			return elm$core$String$fromFloat(x) + 'px';
+	}
+};
+var elm_community$typed_svg$TypedSvg$Attributes$height = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'height',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Types$Px = function (a) {
+	return {$: 'Px', a: a};
+};
+var elm_community$typed_svg$TypedSvg$Types$px = elm_community$typed_svg$TypedSvg$Types$Px;
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$height = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$height(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$width = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'width',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$width = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$width(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$x = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'x',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$x = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$x(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$y = function (length) {
+	return A2(
+		elm_community$typed_svg$TypedSvg$Core$attribute,
+		'y',
+		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
+};
+var elm_community$typed_svg$TypedSvg$Attributes$InPx$y = function (value) {
+	return elm_community$typed_svg$TypedSvg$Attributes$y(
+		elm_community$typed_svg$TypedSvg$Types$px(value));
+};
+var elm_community$typed_svg$TypedSvg$Types$Fill = function (a) {
+	return {$: 'Fill', a: a};
+};
+var elm_community$typed_svg$TypedSvg$Types$FillNone = {$: 'FillNone'};
+var gampleman$elm_visualization$Scale$bandwidth = function (_n0) {
+	var scale = _n0.a;
+	return scale.bandwidth;
+};
+var gampleman$elm_visualization$Scale$convert = F2(
+	function (_n0, value) {
+		var scale = _n0.a;
+		return A3(scale.convert, scale.domain, scale.range, value);
+	});
+var author$project$Main$rectValue = F5(
+	function (model, scale, month, acc, _n0) {
+		var key = _n0.a;
+		var value = _n0.b;
+		return _Utils_Tuple2(
+			acc + value,
+			A2(
+				elm_community$typed_svg$TypedSvg$rect,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$id(key),
+						elm_community$typed_svg$TypedSvg$Attributes$fill(
+						A3(
+							elm_community$maybe_extra$Maybe$Extra$unwrap,
+							elm_community$typed_svg$TypedSvg$Types$FillNone,
+							elm_community$typed_svg$TypedSvg$Types$Fill,
+							A2(
+								elm$core$Maybe$andThen,
+								elm$core$Dict$get(key),
+								A2(elm$core$Maybe$map, author$project$Main$colors, model.data)))),
+						elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
+						A2(gampleman$elm_visualization$Scale$convert, scale.x, month)),
+						elm_community$typed_svg$TypedSvg$Attributes$InPx$y(
+						A2(gampleman$elm_visualization$Scale$convert, scale.y, acc + value)),
+						elm_community$typed_svg$TypedSvg$Attributes$InPx$width(
+						gampleman$elm_visualization$Scale$bandwidth(scale.x)),
+						elm_community$typed_svg$TypedSvg$Attributes$InPx$height(
+						(model.height - A2(gampleman$elm_visualization$Scale$convert, scale.y, acc + value)) - (2 * model.padding))
+					]),
+				_List_Nil));
+	});
 var elm$core$Array$fromListHelp = F3(
 	function (list, nodeList, nodeListSize) {
 		fromListHelp:
@@ -6752,16 +7079,6 @@ var author$project$Main$xScale = function (model) {
 		_Utils_Tuple2(0, model.width - (2 * model.padding)),
 		A3(elm_community$maybe_extra$Maybe$Extra$unwrap, _List_Nil, elm$core$Dict$keys, model.data));
 };
-var elm$core$Dict$values = function (dict) {
-	return A3(
-		elm$core$Dict$foldr,
-		F3(
-			function (key, value, valueList) {
-				return A2(elm$core$List$cons, value, valueList);
-			}),
-		_List_Nil,
-		dict);
-};
 var elm$core$List$maximum = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -6850,8 +7167,6 @@ var gampleman$elm_visualization$Scale$Linear$rangeExtent = F2(
 	function (d, r) {
 		return r;
 	});
-var elm$core$Basics$round = _Basics_round;
-var elm$core$String$fromFloat = _String_fromNumber;
 var elm$core$String$cons = _String_cons;
 var elm$core$String$fromChar = function (_char) {
 	return A2(elm$core$String$cons, _char, '');
@@ -7000,36 +7315,78 @@ var author$project$Main$yScale = function (model) {
 			0,
 			A2(elm$core$Maybe$withDefault, maxSize, model.size)));
 };
-var elm$json$Json$Decode$map2 = _Json_map2;
-var elm$json$Json$Decode$succeed = _Json_succeed;
-var elm$virtual_dom$VirtualDom$toHandlerInt = function (handler) {
-	switch (handler.$) {
-		case 'Normal':
-			return 0;
-		case 'MayStopPropagation':
-			return 1;
-		case 'MayPreventDefault':
-			return 2;
-		default:
-			return 3;
-	}
-};
-var elm$virtual_dom$VirtualDom$nodeNS = function (tag) {
-	return _VirtualDom_nodeNS(
-		_VirtualDom_noScript(tag));
-};
-var elm_community$typed_svg$TypedSvg$Core$node = elm$virtual_dom$VirtualDom$nodeNS('http://www.w3.org/2000/svg');
-var elm_community$typed_svg$TypedSvg$g = elm_community$typed_svg$TypedSvg$Core$node('g');
-var elm_community$typed_svg$TypedSvg$rect = elm_community$typed_svg$TypedSvg$Core$node('rect');
-var elm_community$typed_svg$TypedSvg$text_ = elm_community$typed_svg$TypedSvg$Core$node('text');
-var elm$virtual_dom$VirtualDom$attribute = F2(
-	function (key, value) {
-		return A2(
-			_VirtualDom_attribute,
-			_VirtualDom_noOnOrFormAction(key),
-			_VirtualDom_noJavaScriptOrHtmlUri(value));
+var elm$core$Dict$map = F2(
+	function (func, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return elm$core$Dict$RBEmpty_elm_builtin;
+		} else {
+			var color = dict.a;
+			var key = dict.b;
+			var value = dict.c;
+			var left = dict.d;
+			var right = dict.e;
+			return A5(
+				elm$core$Dict$RBNode_elm_builtin,
+				color,
+				key,
+				A2(func, key, value),
+				A2(elm$core$Dict$map, func, left),
+				A2(elm$core$Dict$map, func, right));
+		}
 	});
-var elm_community$typed_svg$TypedSvg$Core$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$core$Tuple$second = function (_n0) {
+	var y = _n0.b;
+	return y;
+};
+var elm_community$dict_extra$Dict$Extra$groupBy = F2(
+	function (keyfn, list) {
+		return A3(
+			elm$core$List$foldr,
+			F2(
+				function (x, acc) {
+					return A3(
+						elm$core$Dict$update,
+						keyfn(x),
+						A2(
+							elm$core$Basics$composeR,
+							elm$core$Maybe$map(
+								elm$core$List$cons(x)),
+							A2(
+								elm$core$Basics$composeR,
+								elm$core$Maybe$withDefault(
+									_List_fromArray(
+										[x])),
+								elm$core$Maybe$Just)),
+						acc);
+				}),
+			elm$core$Dict$empty,
+			list);
+	});
+var elm_community$list_extra$List$Extra$mapAccuml = F3(
+	function (f, acc0, list) {
+		var _n0 = A3(
+			elm$core$List$foldl,
+			F2(
+				function (x, _n1) {
+					var acc1 = _n1.a;
+					var ys = _n1.b;
+					var _n2 = A2(f, acc1, x);
+					var acc2 = _n2.a;
+					var y = _n2.b;
+					return _Utils_Tuple2(
+						acc2,
+						A2(elm$core$List$cons, y, ys));
+				}),
+			_Utils_Tuple2(acc0, _List_Nil),
+			list);
+		var accFinal = _n0.a;
+		var generatedList = _n0.b;
+		return _Utils_Tuple2(
+			accFinal,
+			elm$core$List$reverse(generatedList));
+	});
+var elm_community$typed_svg$TypedSvg$g = elm_community$typed_svg$TypedSvg$Core$node('g');
+var elm_community$typed_svg$TypedSvg$text_ = elm_community$typed_svg$TypedSvg$Core$node('text');
 var elm_community$typed_svg$TypedSvg$Attributes$class = function (names) {
 	return A2(
 		elm_community$typed_svg$TypedSvg$Core$attribute,
@@ -7054,96 +7411,9 @@ var elm_community$typed_svg$TypedSvg$Attributes$textAnchor = function (anchorAli
 		'text-anchor',
 		elm_community$typed_svg$TypedSvg$TypesToStrings$anchorAlignmentToString(anchorAlignment));
 };
-var elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString = function (length) {
-	switch (length.$) {
-		case 'Cm':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'cm';
-		case 'Em':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'em';
-		case 'Ex':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'ex';
-		case 'In':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'in';
-		case 'Mm':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'mm';
-		case 'Num':
-			var x = length.a;
-			return elm$core$String$fromFloat(x);
-		case 'Pc':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'pc';
-		case 'Percent':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + '%';
-		case 'Pt':
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'pt';
-		default:
-			var x = length.a;
-			return elm$core$String$fromFloat(x) + 'px';
-	}
-};
-var elm_community$typed_svg$TypedSvg$Attributes$height = function (length) {
-	return A2(
-		elm_community$typed_svg$TypedSvg$Core$attribute,
-		'height',
-		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var elm_community$typed_svg$TypedSvg$Types$Px = function (a) {
-	return {$: 'Px', a: a};
-};
-var elm_community$typed_svg$TypedSvg$Types$px = elm_community$typed_svg$TypedSvg$Types$Px;
-var elm_community$typed_svg$TypedSvg$Attributes$InPx$height = function (value) {
-	return elm_community$typed_svg$TypedSvg$Attributes$height(
-		elm_community$typed_svg$TypedSvg$Types$px(value));
-};
-var elm_community$typed_svg$TypedSvg$Attributes$width = function (length) {
-	return A2(
-		elm_community$typed_svg$TypedSvg$Core$attribute,
-		'width',
-		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var elm_community$typed_svg$TypedSvg$Attributes$InPx$width = function (value) {
-	return elm_community$typed_svg$TypedSvg$Attributes$width(
-		elm_community$typed_svg$TypedSvg$Types$px(value));
-};
-var elm_community$typed_svg$TypedSvg$Attributes$x = function (length) {
-	return A2(
-		elm_community$typed_svg$TypedSvg$Core$attribute,
-		'x',
-		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var elm_community$typed_svg$TypedSvg$Attributes$InPx$x = function (value) {
-	return elm_community$typed_svg$TypedSvg$Attributes$x(
-		elm_community$typed_svg$TypedSvg$Types$px(value));
-};
-var elm_community$typed_svg$TypedSvg$Attributes$y = function (length) {
-	return A2(
-		elm_community$typed_svg$TypedSvg$Core$attribute,
-		'y',
-		elm_community$typed_svg$TypedSvg$TypesToStrings$lengthToString(length));
-};
-var elm_community$typed_svg$TypedSvg$Attributes$InPx$y = function (value) {
-	return elm_community$typed_svg$TypedSvg$Attributes$y(
-		elm_community$typed_svg$TypedSvg$Types$px(value));
-};
 var elm$virtual_dom$VirtualDom$text = _VirtualDom_text;
 var elm_community$typed_svg$TypedSvg$Core$text = elm$virtual_dom$VirtualDom$text;
 var elm_community$typed_svg$TypedSvg$Types$AnchorMiddle = {$: 'AnchorMiddle'};
-var gampleman$elm_visualization$Scale$bandwidth = function (_n0) {
-	var scale = _n0.a;
-	return scale.bandwidth;
-};
-var gampleman$elm_visualization$Scale$convert = F2(
-	function (_n0, value) {
-		var scale = _n0.a;
-		return A3(scale.convert, scale.domain, scale.range, value);
-	});
 var gampleman$elm_visualization$Scale$toRenderable = F2(
 	function (toString, _n0) {
 		var scale = _n0.a;
@@ -7171,8 +7441,21 @@ var gampleman$elm_visualization$Scale$toRenderable = F2(
 	});
 var author$project$Main$column = F3(
 	function (model, key, outputs) {
+		var values = A2(
+			elm$core$Dict$map,
+			elm$core$Basics$always(
+				A2(elm$core$Basics$composeL, elm$core$Basics$toFloat, elm$core$List$length)),
+			A2(
+				elm_community$dict_extra$Dict$Extra$groupBy,
+				function ($) {
+					return $.media;
+				},
+				outputs));
 		var value = elm$core$List$length(outputs);
-		var scale = author$project$Main$xScale(model);
+		var scale = {
+			x: author$project$Main$xScale(model),
+			y: author$project$Main$yScale(model)
+		};
 		return A2(
 			elm_community$typed_svg$TypedSvg$g,
 			_List_fromArray(
@@ -7184,25 +7467,14 @@ var author$project$Main$column = F3(
 			_List_fromArray(
 				[
 					A2(
-					elm_community$typed_svg$TypedSvg$rect,
-					_List_fromArray(
-						[
-							elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
-							A2(gampleman$elm_visualization$Scale$convert, scale, key)),
-							elm_community$typed_svg$TypedSvg$Attributes$InPx$y(
-							A2(
-								gampleman$elm_visualization$Scale$convert,
-								author$project$Main$yScale(model),
-								value)),
-							elm_community$typed_svg$TypedSvg$Attributes$InPx$width(
-							gampleman$elm_visualization$Scale$bandwidth(scale)),
-							elm_community$typed_svg$TypedSvg$Attributes$InPx$height(
-							(model.height - A2(
-								gampleman$elm_visualization$Scale$convert,
-								author$project$Main$yScale(model),
-								value)) - (2 * model.padding))
-						]),
-					_List_Nil),
+					elm_community$typed_svg$TypedSvg$g,
+					_List_Nil,
+					elm$core$List$reverse(
+						A3(
+							elm_community$list_extra$List$Extra$mapAccuml,
+							A3(author$project$Main$rectValue, model, scale, key),
+							0,
+							elm$core$Dict$toList(values)).b)),
 					A2(
 					elm_community$typed_svg$TypedSvg$text_,
 					_List_fromArray(
@@ -7210,13 +7482,10 @@ var author$project$Main$column = F3(
 							elm_community$typed_svg$TypedSvg$Attributes$InPx$x(
 							A2(
 								gampleman$elm_visualization$Scale$convert,
-								A2(gampleman$elm_visualization$Scale$toRenderable, author$project$Main$toMonth, scale),
+								A2(gampleman$elm_visualization$Scale$toRenderable, author$project$Main$toMonth, scale.x),
 								key)),
 							elm_community$typed_svg$TypedSvg$Attributes$InPx$y(
-							A2(
-								gampleman$elm_visualization$Scale$convert,
-								author$project$Main$yScale(model),
-								value) - 5),
+							A2(gampleman$elm_visualization$Scale$convert, scale.y, value) - 5),
 							elm_community$typed_svg$TypedSvg$Attributes$textAnchor(elm_community$typed_svg$TypedSvg$Types$AnchorMiddle)
 						]),
 					_List_fromArray(
@@ -7226,10 +7495,27 @@ var author$project$Main$column = F3(
 						]))
 				]));
 	});
-var elm$core$Tuple$second = function (_n0) {
-	var y = _n0.b;
-	return y;
-};
+var elm$html$Html$div = _VirtualDom_node('div');
+var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
+var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
+var author$project$Main$toColorPad = F2(
+	function (key, val) {
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$Attributes$style,
+					'border-left',
+					'10px solid ' + avh4$elm_color$Color$toCssString(val)),
+					A2(elm$html$Html$Attributes$style, 'padding', '5px')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text(key)
+				]));
+	});
 var elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
 var elm$svg$Svg$g = elm$svg$Svg$trustedNode('g');
 var elm$svg$Svg$line = elm$svg$Svg$trustedNode('line');
@@ -7444,35 +7730,8 @@ var author$project$Main$xAxis = function (model) {
 			author$project$Main$toMonth,
 			author$project$Main$xScale(model)));
 };
-var elm$core$Dict$map = F2(
-	function (func, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return elm$core$Dict$RBEmpty_elm_builtin;
-		} else {
-			var color = dict.a;
-			var key = dict.b;
-			var value = dict.c;
-			var left = dict.d;
-			var right = dict.e;
-			return A5(
-				elm$core$Dict$RBNode_elm_builtin,
-				color,
-				key,
-				A2(func, key, value),
-				A2(elm$core$Dict$map, func, left),
-				A2(elm$core$Dict$map, func, right));
-		}
-	});
-var elm$html$Html$div = _VirtualDom_node('div');
 var elm$html$Html$h2 = _VirtualDom_node('h2');
-var elm$html$Html$text = elm$virtual_dom$VirtualDom$text;
-var elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
-var elm$html$Html$Attributes$style = elm$virtual_dom$VirtualDom$style;
-var elm_community$typed_svg$TypedSvg$style = elm_community$typed_svg$TypedSvg$Core$node('style');
 var elm_community$typed_svg$TypedSvg$svg = elm_community$typed_svg$TypedSvg$Core$node('svg');
-var elm$core$String$concat = function (strings) {
-	return A2(elm$core$String$join, '', strings);
-};
 var elm_community$typed_svg$TypedSvg$TypesToStrings$transformToString = function (xform) {
 	var tr = F2(
 		function (name, args) {
@@ -7584,6 +7843,19 @@ var author$project$Main$view = function (model) {
 						elm$html$Html$text(model.title)
 					])),
 				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'position', 'absolute'),
+						A2(elm$html$Html$Attributes$style, 'margin-left', '20px')
+					]),
+				elm$core$List$reverse(
+					elm$core$Dict$values(
+						A2(
+							elm$core$Dict$map,
+							author$project$Main$toColorPad,
+							A3(elm_community$maybe_extra$Maybe$Extra$unwrap, elm$core$Dict$empty, author$project$Main$colors, model.data))))),
+				A2(
 				elm_community$typed_svg$TypedSvg$svg,
 				_List_fromArray(
 					[
@@ -7591,13 +7863,6 @@ var author$project$Main$view = function (model) {
 					]),
 				_List_fromArray(
 					[
-						A2(
-						elm_community$typed_svg$TypedSvg$style,
-						_List_Nil,
-						_List_fromArray(
-							[
-								elm_community$typed_svg$TypedSvg$Core$text('\n                .column rect { fill: rgba(118, 214, 78, 0.8); }\n                .column text { display: none; }\n                .column:hover rect { fill: rgb(118, 214, 78); }\n                .column:hover text { display: inline; }\n                ')
-							])),
 						A2(
 						elm_community$typed_svg$TypedSvg$g,
 						_List_fromArray(

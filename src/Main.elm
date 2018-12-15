@@ -3,13 +3,18 @@ module Main exposing (main)
 import Array
 import Axis
 import Browser exposing (Document)
+import Color exposing (Color)
 import Data exposing (Data)
 import Debug
-import Dict
-import Html
+import Dict exposing (Dict)
+import Dict.Extra as Dict
+import Html exposing (Html)
 import Html.Attributes as Html
+import List.Extra as List
 import Maybe.Extra as Maybe
 import Scale
+import Scale.Color as Scale
+import Tuple
 import TypedSvg as Svg
 import TypedSvg.Attributes as SvgAttr
 import TypedSvg.Attributes.InPx as SvgAttrPx
@@ -88,15 +93,18 @@ view model =
     { title = model.title
     , body =
         [ Html.h2 [ Html.style "text-align" "center" ] [ Html.text model.title ]
+        , Html.div
+            [ Html.style "position" "absolute"
+            , Html.style "margin-left" "20px"
+            ]
+            (List.reverse <|
+                Dict.values <|
+                    Dict.map toColorPad <|
+                        Maybe.unwrap Dict.empty colors model.data
+            )
         , Svg.svg
             [ SvgAttr.viewBox 0 0 model.width model.height ]
-            [ Svg.style [] [ Svg.text """
-                .column rect { fill: rgba(118, 214, 78, 0.8); }
-                .column text { display: none; }
-                .column:hover rect { fill: rgb(118, 214, 78); }
-                .column:hover text { display: inline; }
-                """ ]
-            , Svg.g
+            [ Svg.g
                 [ SvgAttr.transform
                     [ Svg.Translate (model.padding - 1) (model.height - model.padding) ]
                 ]
@@ -115,6 +123,15 @@ view model =
             Html.div [] []
         ]
     }
+
+
+toColorPad : String -> Color -> Html msg
+toColorPad key val =
+    Html.div
+        [ Html.style "border-left" ("10px solid " ++ Color.toCssString val)
+        , Html.style "padding" "5px"
+        ]
+        [ Html.text key ]
 
 
 xAxis : Model -> Svg Msg
@@ -152,29 +169,54 @@ column : Model -> String -> List Data.Output -> Svg Msg
 column model key outputs =
     let
         scale =
-            xScale model
+            { x = xScale model, y = yScale model }
 
         value =
             toFloat <| List.length outputs
+
+        values =
+            Dict.groupBy .media outputs
+                |> Dict.map (always (toFloat << List.length))
     in
     Svg.g [ SvgAttr.class [ "column" ] ]
-        [ Svg.rect
-            [ SvgAttrPx.x <| Scale.convert scale key
-            , SvgAttrPx.y <| Scale.convert (yScale model) value
-            , SvgAttrPx.width <| Scale.bandwidth scale
-            , SvgAttrPx.height <|
-                model.height
-                    - Scale.convert (yScale model) value
-                    - (2 * model.padding)
-            ]
-            []
+        [ Svg.g [] <|
+            List.reverse <|
+                Tuple.second <|
+                    List.mapAccuml (rectValue model scale key) 0 (Dict.toList values)
         , Svg.text_
-            [ SvgAttrPx.x <| Scale.convert (Scale.toRenderable toMonth scale) key
-            , SvgAttrPx.y <| Scale.convert (yScale model) value - 5
+            [ SvgAttrPx.x <| Scale.convert (Scale.toRenderable toMonth scale.x) key
+            , SvgAttrPx.y <| Scale.convert scale.y value - 5
             , SvgAttr.textAnchor Svg.AnchorMiddle
             ]
             [ Svg.text <| String.fromFloat value ]
         ]
+
+
+rectValue :
+    Model
+    -> { x : Scale.BandScale String, y : Scale.ContinuousScale Float }
+    -> String
+    -> Float
+    -> ( String, Float )
+    -> ( Float, Svg Msg )
+rectValue model scale month acc ( key, value ) =
+    ( acc + value
+    , Svg.rect
+        [ Html.id key
+        , SvgAttr.fill <|
+            Maybe.unwrap Svg.FillNone Svg.Fill <|
+                Maybe.andThen (Dict.get key) <|
+                    Maybe.map colors model.data
+        , SvgAttrPx.x <| Scale.convert scale.x month
+        , SvgAttrPx.y <| Scale.convert scale.y (acc + value)
+        , SvgAttrPx.width <| Scale.bandwidth scale.x
+        , SvgAttrPx.height <|
+            model.height
+                - Scale.convert scale.y (acc + value)
+                - (2 * model.padding)
+        ]
+        []
+    )
 
 
 parseDataUrl : Url -> Maybe String
@@ -210,6 +252,11 @@ parseDebug url =
     Url.parse (Url.top <?> Query.string "debug") { url | path = "" }
         |> Maybe.join
         |> Maybe.unwrap False (always True)
+
+
+colors : Data -> Dict String Color
+colors data =
+    List.zip (Data.categories data) Scale.category10 |> Dict.fromList
 
 
 toMonth : String -> String

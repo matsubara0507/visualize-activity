@@ -1,8 +1,9 @@
-module Data exposing (Data, Msg(..), Output, fetch, update)
+module Data exposing (Data, Msg(..), Output, categories, fetch, update)
 
 import Dict exposing (Dict)
 import Http
 import Json.Decode as Json
+import List.Extra as List
 import Url exposing (Url)
 
 
@@ -15,6 +16,14 @@ type alias Output =
     , media : String
     , url : String
     }
+
+
+categories : Data -> List String
+categories data =
+    Dict.values data
+        |> List.concat
+        |> List.map .media
+        |> List.unique
 
 
 type Msg
