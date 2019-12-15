@@ -106,15 +106,15 @@ view model =
             [ SvgAttr.viewBox 0 0 model.width model.height ]
             [ Svg.g
                 [ SvgAttr.transform
-                    [ Svg.Translate (model.padding - 1) (model.height - model.padding) ]
-                ]
-                [ xAxis model ]
-            , Svg.g
-                [ SvgAttr.transform
                     [ Svg.Translate model.padding model.padding ]
                 , SvgAttr.class [ "series" ]
                 ]
                 (Maybe.unwrap [] (Dict.values << Dict.map (column model)) model.data)
+            , Svg.g
+                [ SvgAttr.transform
+                    [ Svg.Translate (model.padding - 1) (model.height - model.padding) ]
+                ]
+                [ xAxis model ]
             ]
         , if model.debug then
             Html.text (Debug.toString model)
@@ -171,24 +171,26 @@ column model key outputs =
         scale =
             { x = xScale model, y = yScale model }
 
-        value =
+        size =
             toFloat <| List.length outputs
 
         values =
             Dict.groupBy .media outputs
-                |> Dict.map (always (toFloat << List.length))
+                |> Dict.values
+                |> List.sortBy List.length
+                |> List.concat
     in
     Svg.g [ SvgAttr.class [ "column" ] ]
         [ Svg.g [] <|
             List.reverse <|
                 Tuple.second <|
-                    List.mapAccuml (rectValue model scale key) 0 (Dict.toList values)
+                    List.mapAccuml (rectValue model scale key) 0 values
         , Svg.text_
             [ SvgAttrPx.x <| Scale.convert (Scale.toRenderable toMonth scale.x) key
-            , SvgAttrPx.y <| Scale.convert scale.y value - 5
+            , SvgAttrPx.y <| Scale.convert scale.y size - 5
             , SvgAttr.textAnchor Svg.AnchorMiddle
             ]
-            [ Svg.text <| String.fromFloat value ]
+            [ Svg.text <| String.fromFloat size ]
         ]
 
 
@@ -197,25 +199,35 @@ rectValue :
     -> { x : Scale.BandScale String, y : Scale.ContinuousScale Float }
     -> String
     -> Float
-    -> ( String, Float )
+    -> Data.Output
     -> ( Float, Svg Msg )
-rectValue model scale month acc ( key, value ) =
-    ( acc + value
-    , Svg.rect
-        [ Html.id key
-        , SvgAttr.fill <|
-            Maybe.unwrap Svg.FillNone Svg.Fill <|
-                Maybe.andThen (Dict.get key) <|
-                    Maybe.map colors model.data
-        , SvgAttrPx.x <| Scale.convert scale.x month
-        , SvgAttrPx.y <| Scale.convert scale.y (acc + value)
-        , SvgAttrPx.width <| Scale.bandwidth scale.x
-        , SvgAttrPx.height <|
-            model.height
-                - Scale.convert scale.y (acc + value)
-                - (2 * model.padding)
+rectValue model scale month acc output =
+    let
+        size =
+            acc + 1
+
+        color =
+            Maybe.map colors model.data
+                |> Maybe.andThen (Dict.get output.media)
+                |> Maybe.withDefault Color.white
+    in
+    ( size
+    , Svg.a [ SvgAttr.xlinkHref output.url ]
+        [ Svg.rect
+            [ Html.id output.media
+            , SvgAttr.fill (Svg.Fill color)
+            , SvgAttr.stroke Color.white
+            , SvgAttr.strokeWidth (Svg.Em 0.05)
+            , SvgAttrPx.x (Scale.convert scale.x month)
+            , SvgAttrPx.y (Scale.convert scale.y size)
+            , SvgAttrPx.width (Scale.bandwidth scale.x)
+            , SvgAttrPx.height <|
+                model.height
+                    - Scale.convert scale.y size
+                    - (2 * model.padding)
+            ]
+            []
         ]
-        []
     )
 
 
